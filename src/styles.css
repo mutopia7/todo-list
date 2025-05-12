@@ -4,7 +4,7 @@
 }
 
 
-*{
+:root{
     --egg: #fcfaf8;
     --light-black: #202020;
     --dark-blue: rgb(74, 102, 226);
@@ -28,7 +28,7 @@ html, body{
 
 .all{
     display: grid;
-    grid-template: 1fr / clamp(200px, 25%, 400px)  1fr;
+    grid-template: 1fr / clamp(260px, 25%, 400px)  1fr;
     min-height: 100%;
 }
 
@@ -63,8 +63,11 @@ html, body{
     display: flex;
     align-items: center;
     gap: var(--inline-gap);
+    white-space: nowrap;
     cursor: pointer;
     padding: var(--padding-button);
+    min-width: 0;
+    flex-shrink: 1;
     border-radius: 10px;
     margin: 0px;
 }
@@ -85,6 +88,7 @@ html, body{
 .size-3{
     height: 1.5rem;
     width: 1.5rem;
+    flex-shrink: 0;
 }
 
 .tag{
@@ -98,4 +102,18 @@ html, body{
     display: flex;
     flex-direction: column;
     gap: var(--min-gap);
+}
+
+
+
+
+
+
+@media (max-width:1200px) {
+    :root {
+      --padding-sidebar: 20px 20px;
+      --padding-button: 6px 6px;
+      --min-gap: 4px;
+      --max-gap: 15px;
+    }
 }
