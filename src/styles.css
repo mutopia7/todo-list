@@ -10,8 +10,14 @@
     --dark-blue: rgb(74, 102, 226);
     --blue: rgb(159, 157, 186);
     --light-gary:rgb(218, 215, 215);
+    --top-priority: rgb(251, 6, 6);
+    --med-priority: rgb(248, 161, 1);
+    --low-priority: rgb(242, 202, 126);
+
+
     --padding-sidebar: 60px 60px;
     --padding-button:10px 10px;
+    --padding-show: 40px 40px;
     --min-gap: 7px;
     --max-gap: 35px;
     --inline-gap: 0.5rem;
@@ -24,6 +30,7 @@
 
 html, body{
     height: 100%;
+    font-family: roboto;
 }
 
 .all{
@@ -103,6 +110,58 @@ html, body{
     flex-direction: column;
     gap: var(--min-gap);
 }
+
+
+
+/* show section */
+
+.show{
+    padding: var(--padding-show) ;
+    display: flex;
+    flex-direction: column;
+}
+
+.show
+
+.project {
+    display: flex;
+    flex-direction: column;
+}
+  
+.project > * {
+    border-bottom: 1px solid var(--light-gary);
+    padding-bottom: var(--min-gap);
+}
+
+.task > p:not(.title){
+    color: var(--dark-blue);
+    margin: 5px 30px;
+    font-weight: 300;
+    font-size: 0.7rem;
+}
+
+
+.title {
+    display: flex;
+    align-items: center;
+    gap: var(--min-gap);
+    font-weight: 400;
+    font-size: 1rem;
+}
+
+.priority {
+    border: 1px solid var(--top-priority);
+    background-color: var(--top-priority);
+    border-radius: 100%;
+    width: 1ch;
+    height: 1ch;
+}
+
+
+
+
+
+
 
 
 
