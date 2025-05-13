@@ -21,7 +21,49 @@
                 </a>
             </div>
             <div class="tag">
-                <button class="add">
+
+                <dialog id="add-dialog">
+                    <div class="dialog-header">
+                        <h3>Add Task</h3>
+                        <button class="close-dialog" id="close-add-dialog">
+                            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="size-3">
+                                <path stroke-linecap="round" stroke-linejoin="round" d="M6 18 18 6M6 6l12 12" />
+                              </svg>
+                              
+                             <span class="visually-hidden">close</span>
+                        </button>
+                    </div>
+                    <form action="">
+                        <label for="task-title" class="visually-hidden">
+                            Task Title:
+                        </label>
+                        <input type="text" name="task-title" id="task-title" placeholder="Task Title">
+
+                        <label for="description" class="visually-hidden">
+                            Description:
+                        </label>
+                        <textarea name="description" id="description" placeholder="Description"></textarea>
+
+                        <label for="due-date" class="visually-hidden">
+                            Date:
+
+                        </label>
+                        <input type="date" id="due-date">
+
+                        <label for="priority-input">
+                            Priority:
+                        </label>
+                        <select name="priority" id="priority-input">
+                            <option value="high">high</option>
+                            <option value="med">med</option>
+                            <option value="low">low</option>
+                        </select>
+
+                        <button type="submit" class="submit-dialog" id="submit-add-task">Add Task</button>
+                    </form>
+                </dialog>
+
+                <button class="add" id="add-task">
                     <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" class="size-3">
                         <path fill-rule="evenodd"
                             d="M12 2.25c-5.385 0-9.75 4.365-9.75 9.75s4.365 9.75 9.75 9.75 9.75-4.365 9.75-9.75S17.385 2.25 12 2.25ZM12.75 9a.75.75 0 0 0-1.5 0v2.25H9a.75.75 0 0 0 0 1.5h2.25V15a.75.75 0 0 0 1.5 0v-2.25H15a.75.75 0 0 0 0-1.5h-2.25V9Z"
@@ -29,6 +71,9 @@
                     </svg>
                     Add task
                 </button>
+
+
+
                 <button>
                     <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5"
                         stroke="currentColor" class="size-3">
@@ -107,8 +152,10 @@
                 <h4>School</h4>
                 <div class="task">
                     <div class="title">
-                        <input type="checkbox" class="task-checkbox">
-                        <p class="title-task">math exercise</p>
+                        <label class="title-task">
+                            <input type="checkbox" class="task-checkbox">
+                            <p>math</p>
+                        </label>
                         <span class="priority"></span>
                     </div>
                     <p class="task-explain">do the math exersice</p>
@@ -121,7 +168,9 @@
                         <p class="title-task">math exercise</p>
                         <span class="priority"></span>
                     </div>
-                    <p class="task-explain">do the math exersice Lorem ipsum, dolor sit amet consectetur adipisicing elit. Magni, aspernatur itaque? Consequatur vitae non dolorum ipsam nobis voluptatem minima amet. Incidunt in perspiciatis eveniet impedit magni et consequuntur illo vel!</p>
+                    <p class="task-explain">do the math exersice Lorem ipsum, dolor sit amet consectetur adipisicing
+                        elit. Magni, aspernatur itaque? Consequatur vitae non dolorum ipsam nobis voluptatem minima
+                        amet. Incidunt in perspiciatis eveniet impedit magni et consequuntur illo vel!</p>
                     <p class="date">2024/02/09</p>
 
                 </div>

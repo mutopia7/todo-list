@@ -11,16 +11,7 @@ projects.push(work, school);
 const task1 = new Task("تحویل گزارش", "گزارش پروژه رو بنویس", "فردا", "بالا", work);
 const task2 = new Task("درس خوندن", "مطالعه فصل ۲", "جمعه", "متوسط", work);
 
-// console.log(work.tasks);   // شامل task1
-// console.log(school.tasks); // شامل task2
 
-
-
-// const divProject = document.createElement("div");
-// divProject.classList.add("project");
-
-// const projectNameShow = document.createElement("h4");
-// projectNameShow.textContent = projectName.name;
 
 
 
@@ -34,20 +25,26 @@ function createTaskElement(task) {
     const divTitle = document.createElement("div");
     divTitle.classList.add("title");
 
+    const titleTaskLabel = document.createElement("label");
+    titleTaskLabel.classList.add("title-task");
+    
+    const titleTask = document.createElement("p");
+    titleTask.textContent = task.title;
+    
+
     const taskCheckBox = document.createElement("input");
     taskCheckBox.type = "checkbox";
     taskCheckBox.classList.add("task-checkbox");
     taskCheckBox.checked = task.completed;
 
+    titleTaskLabel.append(taskCheckBox , titleTask)
 
-    const titleTask = document.createElement("p");
-    titleTask.classList.add("title-task")
-    titleTask.textContent = task.title;
+    
 
     const prioritySpan = document.createElement("span");
     prioritySpan.classList.add("priority")
 
-    divTitle.append(taskCheckBox, titleTask, prioritySpan);
+    divTitle.append( titleTaskLabel, prioritySpan);
 
     const taskExplain = document.createElement("p");
     taskExplain.classList.add("task-explain");

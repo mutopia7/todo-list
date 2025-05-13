@@ -149,6 +149,18 @@ html, body{
     font-size: 1rem;
 }
 
+.title-task {
+    display:  flex;
+    align-items: center;
+    gap: var(--min-gap);
+    cursor: pointer;
+}
+
+.title-task input[type=checkbox]{
+    cursor: pointer;
+    accent-color: var(--dark-blue);
+}
+
 .priority {
     border: 1px solid var(--top-priority);
     background-color: var(--top-priority);
