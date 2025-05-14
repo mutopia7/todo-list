@@ -8,7 +8,7 @@ const work = new Project("کار");
 const school = new Project("مدرسه");
 projects.push(work, school);
 
-const task1 = new Task("تحویل گزارش", "گزارش پروژه رو بنویس", "فردا", "بالا", work);
+const task1 = new Task("project dialog", "Add dialog for project sec", "22/12/2023", "high", work )
 const task2 = new Task("درس خوندن", "مطالعه فصل ۲", "جمعه", "متوسط", work);
 
 
@@ -48,7 +48,7 @@ function createTaskElement(task) {
     
 
     const prioritySpan = document.createElement("span");
-    prioritySpan.classList.add("priority")
+    prioritySpan.classList.add(task.priority);
 
     divTitle.append( titleTaskLabel, prioritySpan);
 
@@ -85,7 +85,16 @@ function renderProject(project) {
     });
   
     document.querySelector(".show").appendChild(projectContainer);
-  }
+}
   
+function createProjectElement(projectName) {
+    const projectsList = document.querySelector(".projects");
 
-export {renderProject , work }
+    const projectButton = document.createElement("button");
+    projectButton.classList.add("project-items");
+    projectButton.textContent = projectName;
+    projectsList.appendChild(projectButton);
+}
+
+
+export {renderProject , work , createProjectElement}

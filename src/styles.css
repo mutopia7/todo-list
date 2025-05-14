@@ -170,9 +170,25 @@ html, body{
     accent-color: var(--dark-blue);
 }
 
-.priority {
+.high {
     border: 1px solid var(--top-priority);
     background-color: var(--top-priority);
+    border-radius: 100%;
+    width: 1ch;
+    height: 1ch;
+}
+
+.med {
+    border: 1px solid var(--med-priority);
+    background-color: var(--med-priority);
+    border-radius: 100%;
+    width: 1ch;
+    height: 1ch;
+}
+
+.low {
+    border: 1px solid var(--low-priority);
+    background-color: var(--low-priority);
     border-radius: 100%;
     width: 1ch;
     height: 1ch;
@@ -192,7 +208,7 @@ html, body{
     background-color: #d0ffd0;
     text-decoration: line-through;
     border-radius: 10px;
-    opacity: 0.6;
+    opacity: 0.8;
 }
 
 .title-task-p {

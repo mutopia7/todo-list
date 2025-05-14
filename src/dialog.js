@@ -1,6 +1,6 @@
 import "./dialog.css"
 import {Task , Project} from "./logic.js"
-import { renderProject } from "./dom.js"
+import { renderProject , createProjectElement } from "./dom.js"
 
 
 const home = new Project("home")
@@ -61,6 +61,7 @@ submitAddProject.addEventListener("click", (e) => {
     
     const newProject = new Project(addProjectInput.value);
     console.log(newProject);
+    createProjectElement(newProject.name)
     projectDialog.close();
 })
 
