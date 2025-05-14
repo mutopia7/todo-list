@@ -59,7 +59,7 @@
                             <option value="low">low</option>
                         </select>
 
-                        <button type="submit" class="submit-dialog" id="submit-add-task">Add Task</button>
+                        <button type="submit" class="submit-dialog" id="submit-add-task">Done</button>
                     </form>
                 </dialog>
 
@@ -111,7 +111,30 @@
 
             <div class="projects">
                 <h3>Projects</h3>
-                <button class="add">
+
+                <dialog id="project-dialog">
+                    <div class="dialog-header">
+                        <h3>Add Task</h3>
+                        <button class="close-dialog" id="close-project-dialog">
+                            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="size-3">
+                                <path stroke-linecap="round" stroke-linejoin="round" d="M6 18 18 6M6 6l12 12" />
+                              </svg>
+                              
+                             <span class="visually-hidden">close</span>
+                        </button>
+                    </div>
+                    <form action="">
+                        <label for="add-project-input" class="visually-hidden">Project name</label>
+                        <input type="text" id="add-project-input" placeholder="Project name">
+
+                        <button type="submit" class="submit-dialog" id="submit-add-project">Done</button>
+
+
+                    </form>
+
+                </dialog>
+
+                <button class="add" id="add-project">
                     <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5"
                         stroke="currentColor" class="size-3">
                         <path stroke-linecap="round" stroke-linejoin="round"
@@ -154,24 +177,12 @@
                     <div class="title">
                         <label class="title-task">
                             <input type="checkbox" class="task-checkbox">
-                            <p>math</p>
+                            <p class="title-task-p">math</p>
                         </label>
                         <span class="priority"></span>
                     </div>
                     <p class="task-explain">do the math exersice</p>
                     <p class="task-date">2024/02/09</p>
-
-                </div>
-                <div class="task">
-                    <div class="title">
-                        <input type="checkbox">
-                        <p class="title-task">math exercise</p>
-                        <span class="priority"></span>
-                    </div>
-                    <p class="task-explain">do the math exersice Lorem ipsum, dolor sit amet consectetur adipisicing
-                        elit. Magni, aspernatur itaque? Consequatur vitae non dolorum ipsam nobis voluptatem minima
-                        amet. Incidunt in perspiciatis eveniet impedit magni et consequuntur illo vel!</p>
-                    <p class="date">2024/02/09</p>
 
                 </div>
             </div>

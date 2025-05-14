@@ -9,6 +9,6 @@ import {  home } from "./dialog.js"
 
 
 
-console.log(home.name)
+console.log(home)
 
 renderProject(work)

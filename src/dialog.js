@@ -38,5 +38,30 @@ submitAddTask.addEventListener("click", (e) => {
 
 })
 
+// add project dialog //
+
+const showAddProject = document.querySelector("#add-project");
+const projectDialog = document.querySelector("#project-dialog")
+const closeAddProject = document.querySelector("#close-project-dialog");
+const submitAddProject = document.querySelector("#submit-add-project");
+
+showAddProject.addEventListener("click", () => {
+    projectDialog.showModal();
+});
+
+closeAddProject.addEventListener("click", () => {
+
+    projectDialog.close();
+});
+
+submitAddProject.addEventListener("click", (e) => {
+    e.preventDefault();
+
+    const addProjectInput = document.querySelector("#add-project-input");
+    
+    const newProject = new Project(addProjectInput.value);
+    console.log(newProject);
+    projectDialog.close();
+})
 
 export{ home };

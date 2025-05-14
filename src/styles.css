@@ -79,11 +79,11 @@ html, body{
     margin: 0px;
 }
 
-.tag button:not(:first-child):hover{
+.tag button:not(#add-task):hover{
     background-color: var(--light-gary);
 }
 
-.projects button:nth-child(n + 3):hover{
+.projects button:not(#add-project):hover{
     background-color: var(--light-gary);
 }
 
@@ -112,8 +112,8 @@ html, body{
 }
 
 
-
 /* show section */
+
 
 .show{
     padding: var(--padding-show) ;
@@ -121,7 +121,7 @@ html, body{
     flex-direction: column;
 }
 
-.show
+
 
 .project {
     display: flex;
@@ -129,9 +129,17 @@ html, body{
 }
   
 .project > * {
-    border-bottom: 1px solid var(--light-gary);
+    
     padding-bottom: var(--min-gap);
 }
+
+.task {
+    /* border-radius: 10px 10px 0px 0px; */
+    border-bottom: 1px solid var(--light-gary);
+    margin-bottom: 5px;
+
+}
+
 
 .task > p:not(.title){
     color: var(--dark-blue);
@@ -152,6 +160,7 @@ html, body{
 .title-task {
     display:  flex;
     align-items: center;
+    max-height: 30px;
     gap: var(--min-gap);
     cursor: pointer;
 }
@@ -170,6 +179,25 @@ html, body{
 }
 
 
+.task-explain{
+    color: var(--light-black) !important;
+    display: none;
+}
+
+.task:hover > .task-explain{
+    display: block;
+}
+
+.task.completed {
+    background-color: #d0ffd0;
+    text-decoration: line-through;
+    border-radius: 10px;
+    opacity: 0.6;
+}
+
+.title-task-p {
+    font-size: 0.8rem;
+}
 
 
 

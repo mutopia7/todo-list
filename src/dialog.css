@@ -94,3 +94,23 @@
     padding: 10px 10px !important;
     align-self: center !important;
 }
+
+/* project dialog */
+
+#project-dialog{
+    border: none;
+    border-radius: 10px;
+    padding: 30px;
+}
+
+#project-dialog form{
+    display: flex;
+    gap: var(--min-gap);
+}
+
+#project-dialog form input{
+    background-color: #f3f3f3;
+    border: none;
+    border-radius: 0.5rem;
+    padding: 5px 10px;
+}

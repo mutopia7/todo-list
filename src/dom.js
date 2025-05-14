@@ -30,12 +30,18 @@ function createTaskElement(task) {
     
     const titleTask = document.createElement("p");
     titleTask.textContent = task.title;
+    titleTask.classList.add("title-task-p")
     
 
     const taskCheckBox = document.createElement("input");
     taskCheckBox.type = "checkbox";
     taskCheckBox.classList.add("task-checkbox");
     taskCheckBox.checked = task.completed;
+
+    taskCheckBox.addEventListener("change", () => {
+        task.toComplete();
+        divTask.classList.toggle("completed", task.completed);
+    })
 
     titleTaskLabel.append(taskCheckBox , titleTask)
 
