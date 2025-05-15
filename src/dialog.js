@@ -1,6 +1,7 @@
 import "./dialog.css"
 import {Task , Project, projects} from "./logic.js"
 import { renderProject, createProjectElement, createOptions } from "./dom.js"
+import { renderView } from "./index.js";
 
 
 const showButton = document.querySelector("#add-task");
@@ -25,14 +26,11 @@ submitAddTask.addEventListener("click", (e) => {
     const dueDate = document.querySelector("#due-date").value;
     const priority = document.querySelector("#priority-input").value;
 
-    
-
-    console.log(projects)
-
     const selectedIndex =  Number(document.querySelector("#select-project").value);
     const selectedProject = projects[selectedIndex];
 
     const newTask = new Task(titleTask, description, dueDate, priority, selectedProject);
+    renderView()
     
     addDialog.close();
     

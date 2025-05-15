@@ -1,6 +1,7 @@
+import { renderView , state } from "./index.js";
 import { Project, Task , projects } from "./logic.js"
 
-const show = document.querySelector(".show")
+
 
 
 
@@ -105,7 +106,9 @@ function createProjectElement(project) {
     projectButton.addEventListener("click", () => {
         const showSection = document.querySelector(".show");
         showSection.innerHTML = "";
-        renderProject(project);
+        state.viewState = { type: "project", project: project.name}
+        console.log(state.viewState)
+        renderView()
     });
 
     projectsList.appendChild(projectButton);
