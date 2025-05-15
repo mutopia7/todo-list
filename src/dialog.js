@@ -3,9 +3,6 @@ import {Task , Project, projects} from "./logic.js"
 import { renderProject, createProjectElement, createOptions } from "./dom.js"
 
 
-const home = new Project("home")
-
-
 const showButton = document.querySelector("#add-task");
 const addDialog = document.querySelector("#add-dialog");
 const closeAddDialog = document.querySelector("#close-add-dialog");
@@ -68,4 +65,3 @@ submitAddProject.addEventListener("click", (e) => {
     projectDialog.close();
 })
 
-export{ home };

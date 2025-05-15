@@ -10,7 +10,6 @@ import "./dialog.js"
 
 
 
-
 console.log(projects)
 
 renderProject(work)

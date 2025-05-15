@@ -1,16 +1,19 @@
 import { Project, Task , projects } from "./logic.js"
 
-// const show = document.querySelector(".show")
+const show = document.querySelector(".show")
 
 
 
-const work = new Project("work");
-const school = new Project("school");
+const work = new Project("Work");
+const home = new Project("Home");
 
 
-const task1 = new Task("project dialog", "Add dialog for project sec", "22/12/2023", "high", work )
+const taskHome1 = new Task("cook", "make lunch", "22/12/2023", "high", home )
+const taskWork1 = new Task("project dialog", "Add dialog for project sec", "22/12/2023", "low", work )
+const taskWork2 = new Task("style", "style show section", "22/12/2023", "med", work )
 
-
+createProjectElement(home);
+createProjectElement(work)
 
 
 
@@ -103,7 +106,6 @@ function createProjectElement(project) {
         const showSection = document.querySelector(".show");
         showSection.innerHTML = "";
         renderProject(project);
-        console.log("project button is running")
     });
 
     projectsList.appendChild(projectButton);

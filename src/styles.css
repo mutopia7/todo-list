@@ -112,6 +112,15 @@ html, body{
 }
 
 
+.project-items:focus{
+    background-color: var(--light-gary);
+}
+
+.tag-items:focus{
+    color: var(--dark-blue);
+}
+
+
 /* show section */
 
 
@@ -134,7 +143,6 @@ html, body{
 }
 
 .task {
-    /* border-radius: 10px 10px 0px 0px; */
     border-bottom: 1px solid var(--light-gary);
     margin-bottom: 5px;
 
