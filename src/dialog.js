@@ -61,7 +61,7 @@ submitAddProject.addEventListener("click", (e) => {
     
     const newProject = new Project(addProjectInput.value);
     console.log(newProject);
-    createProjectElement(newProject.name)
+    createProjectElement(newProject)
     projectDialog.close();
 })
 

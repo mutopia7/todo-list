@@ -79,20 +79,30 @@ function renderProject(project) {
   
     projectContainer.appendChild(heading);
   
-    project.tasks.forEach((task) => {
-      const taskElement = createTaskElement(task);
-      projectContainer.appendChild(taskElement);
-    });
+    if (project.tasks !== ""){
+        project.tasks.forEach((task) => {
+            const taskElement = createTaskElement(task);
+            projectContainer.appendChild(taskElement);
+        });
+    }
   
     document.querySelector(".show").appendChild(projectContainer);
 }
   
-function createProjectElement(projectName) {
+function createProjectElement(project) {
     const projectsList = document.querySelector(".projects");
 
     const projectButton = document.createElement("button");
     projectButton.classList.add("project-items");
-    projectButton.textContent = projectName;
+    projectButton.textContent = project.name;
+
+    projectButton.addEventListener("click", () => {
+        const showSection = document.querySelector(".show");
+        showSection.innerHTML = "";
+        renderProject(project);
+        console.log("project button is running")
+    });
+
     projectsList.appendChild(projectButton);
 }
 
