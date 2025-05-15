@@ -1,15 +1,15 @@
-import { Project, Task } from "./logic.js"
+import { Project, Task , projects } from "./logic.js"
 
 // const show = document.querySelector(".show")
 
-const projects = [];
 
-const work = new Project("کار");
-const school = new Project("مدرسه");
-projects.push(work, school);
+
+const work = new Project("work");
+const school = new Project("school");
+
 
 const task1 = new Task("project dialog", "Add dialog for project sec", "22/12/2023", "high", work )
-const task2 = new Task("درس خوندن", "مطالعه فصل ۲", "جمعه", "متوسط", work);
+
 
 
 
@@ -89,6 +89,9 @@ function renderProject(project) {
     document.querySelector(".show").appendChild(projectContainer);
 }
   
+
+
+
 function createProjectElement(project) {
     const projectsList = document.querySelector(".projects");
 
@@ -107,4 +110,17 @@ function createProjectElement(project) {
 }
 
 
-export {renderProject , work , createProjectElement}
+// add project options to the select at add dialog //
+
+function createOptions() {
+    const selectProject = document.querySelector("#select-project");
+
+    projects.forEach((proj, index) => {
+        const option = document.createElement("option");
+        option.value = index;
+        option.textContent = proj.name;
+        selectProject.appendChild(option)
+    })
+}
+
+export {renderProject , work , createProjectElement, createOptions}

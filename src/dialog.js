@@ -1,6 +1,6 @@
 import "./dialog.css"
-import {Task , Project} from "./logic.js"
-import { renderProject , createProjectElement } from "./dom.js"
+import {Task , Project, projects} from "./logic.js"
+import { renderProject, createProjectElement, createOptions } from "./dom.js"
 
 
 const home = new Project("home")
@@ -13,7 +13,7 @@ const submitAddTask = document.querySelector("#submit-add-task");
 
 showButton.addEventListener("click", () => {
     addDialog.showModal();
-    console.log("add")
+    createOptions();
 })
 
 closeAddDialog.addEventListener("click", () => {
@@ -28,14 +28,17 @@ submitAddTask.addEventListener("click", (e) => {
     const dueDate = document.querySelector("#due-date").value;
     const priority = document.querySelector("#priority-input").value;
 
-    const newTask = new Task(titleTask, description, dueDate, priority, home);
-    addDialog.close();
-    console.log(newTask);
-    console.log(home)
-    renderProject(home)
-    return newTask;
     
 
+    console.log(projects)
+
+    const selectedIndex =  Number(document.querySelector("#select-project").value);
+    const selectedProject = projects[selectedIndex];
+
+    const newTask = new Task(titleTask, description, dueDate, priority, selectedProject);
+    
+    addDialog.close();
+    
 })
 
 // add project dialog //
@@ -60,8 +63,8 @@ submitAddProject.addEventListener("click", (e) => {
     const addProjectInput = document.querySelector("#add-project-input");
     
     const newProject = new Project(addProjectInput.value);
-    console.log(newProject);
-    createProjectElement(newProject)
+    createProjectElement(newProject);
+    console.log(projects)
     projectDialog.close();
 })
 

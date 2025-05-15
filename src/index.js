@@ -1,14 +1,16 @@
 import "./styles.css"
 import "./dialog.js"
-import { Project, Task } from "./logic.js"
+import { Project, Task, projects } from "./logic.js"
 import { renderProject, work } from "./dom.js"
-import {  home } from "./dialog.js"
+import "./dialog.js"
 
 
 
 
 
 
-console.log(home)
+
+
+console.log(projects)
 
 renderProject(work)

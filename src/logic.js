@@ -1,7 +1,11 @@
+const projects = [];
+
+
 class Project {
     constructor(name) {
         this.name = name;
         this.tasks = [];
+        projects.push(this);
     }
 
     addTask(task) {
@@ -28,4 +32,4 @@ class Task {
 
 
 
-export {Project , Task}
+export {Project , Task , projects}
