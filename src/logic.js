@@ -1,6 +1,12 @@
 const projects = [];
 
 
+function getTodayDateStr() {
+    const today = new Date();
+    return today.toISOString().split("T")[0]; // → "2025-05-17"
+}
+  
+
 class Project {
     constructor(name) {
         this.name = name;
@@ -15,6 +21,21 @@ class Project {
     removeTask(task) {
         this.tasks = this.tasks.filter(t => t !== task)
     }
+
+    getCompletedTasks() {
+        return this.tasks.filter(task => task.completed);
+    }
+
+    getTodayTasks() {
+        const todayStr = getTodayDateStr();
+        return this.tasks.filter(task => task.dueDate === todayStr);
+    }
+
+    getScheduledTasks() {
+        const todayStr = getTodayDateStr();
+        return this.tasks.filter(task => task.dueDate > todayStr);
+    }
+
 }
 
 

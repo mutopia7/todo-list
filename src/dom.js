@@ -11,9 +11,9 @@ const work = new Project("Work");
 const home = new Project("Home");
 
 
-const taskHome1 = new Task("cook", "make lunch", "22/12/2023", "high", home )
-const taskWork1 = new Task("project dialog", "Add dialog for project sec", "22/12/2023", "low", work )
-const taskWork2 = new Task("style", "style show section", "22/12/2023", "med", work )
+const taskHome1 = new Task("cook", "make lunch", "2027-05-17", "high", home )
+const taskWork1 = new Task("project dialog", "Add dialog for project sec", "2026-05-17", "low", work )
+const taskWork2 = new Task("style", "style show section", "2024-05-17", "med", work )
 
 createProjectElement(home);
 createProjectElement(work)
@@ -102,17 +102,18 @@ function renderProject(project, completeMode = false) {
     heading.textContent = project.name;
   
     projectContainer.appendChild(heading);
+
+    const tasksToRender = completeMode ? project.getCompletedTasks() : project.tasks;
     
-    if (project.tasks !== "" && completeMode === false){
-        project.tasks.forEach((task) => {
+    if (Array.isArray(project.tasks) && tasksToRender.length > 0 && completeMode === false){
+        tasksToRender.forEach((task) => {
             const taskElement = createTaskElement(task);
             projectContainer.appendChild(taskElement);
         });
     }
 
-    if (project.tasks !== "" && completeMode === true){
-        const completedTasks = project.tasks.filter(task => task.completed);
-        completedTasks.forEach((task) => {
+    if (Array.isArray(project.tasks) && tasksToRender.length > 0 && completeMode === true){
+        tasksToRender.forEach((task) => {
             const taskElement = createTaskElement(task);
             projectContainer.appendChild(taskElement);
         })
@@ -157,4 +158,4 @@ function createOptions() {
     })
 }
 
-export {renderProject , work , createProjectElement, createOptions}
+export {renderProject , work , createProjectElement, createOptions, createTaskElement}
