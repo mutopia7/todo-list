@@ -5,6 +5,7 @@ import { Project, Task , projects } from "./logic.js"
 
 
 
+
 const work = new Project("Work");
 const home = new Project("Home");
 
@@ -64,10 +65,19 @@ function createTaskElement(task) {
     taskDate.classList.add("task-date");
     taskDate.textContent = task.dueDate;
 
+    const deleteTask = document.createElement("button");
+    deleteTask.classList.add("delete-task");
+    deleteTask.textContent = "Delete";
+    deleteTask.addEventListener("click", () => {
+        task.project.removeTask(task);
+        renderView();
+    })
 
 
 
-    divTask.append(divTitle, taskExplain, taskDate);
+
+
+    divTask.append(divTitle, taskExplain, taskDate, deleteTask);
 
 
     return divTask;
@@ -119,6 +129,7 @@ function createProjectElement(project) {
 
 function createOptions() {
     const selectProject = document.querySelector("#select-project");
+    selectProject.innerHTML = "";
 
     projects.forEach((proj, index) => {
         const option = document.createElement("option");

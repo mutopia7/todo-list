@@ -11,6 +11,10 @@ class Project {
     addTask(task) {
         this.tasks.push(task);
     }
+
+    removeTask(task) {
+        this.tasks = this.tasks.filter(t => t !== task)
+    }
 }
 
 
@@ -20,6 +24,7 @@ class Task {
         this.description = description;
         this.dueDate = dueDate;
         this.priority = priority;
+        this.project = project;
         this.completed = false;
 
         project.addTask(this);
