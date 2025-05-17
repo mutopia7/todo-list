@@ -1,5 +1,6 @@
 import { renderView , state } from "./index.js";
 import { Project, Task , projects } from "./logic.js"
+import { openTaskDialog } from "./dialog.js";
 
 
 
@@ -71,13 +72,20 @@ function createTaskElement(task) {
     deleteTask.addEventListener("click", () => {
         task.project.removeTask(task);
         renderView();
+    });
+
+    const editTask = document.createElement("button");
+    editTask.classList.add("edit-task");
+    editTask.textContent = "Edit"
+    editTask.addEventListener("click", () => {
+        openTaskDialog(task)
     })
 
 
 
 
 
-    divTask.append(divTitle, taskExplain, taskDate, deleteTask);
+    divTask.append(divTitle, taskExplain, taskDate, deleteTask, editTask);
 
 
     return divTask;
