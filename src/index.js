@@ -10,22 +10,22 @@ const showSection = document.querySelector(".show")
 
 const state = {
     viewState: {
-      type: "all",
-      project: null
+        type: "all",
+        project: null
     }
-  };
+};
 
 
 // render All projects
 
-function renderAllProjects(){
+function renderAllProjects() {
     showSection.innerHTML = "";
 
     const header = document.createElement("h3")
     header.textContent = "All Projects";
     showSection.appendChild(header)
 
-    projects.forEach( (project) => {
+    projects.forEach((project) => {
         renderProject(project)
     })
 }
@@ -33,12 +33,22 @@ function renderAllProjects(){
 
 //render single project
 
-function renderSingleProject(projectName){
+function renderSingleProject(projectName) {
     showSection.innerHTML = "";
     const selectedProject = projects.find((project) => project.name === projectName);
     renderProject(selectedProject)
 }
 
+
+// render completed tasks
+
+function renderCompletedTasks() {
+    showSection.innerHTML = ""
+    projects.forEach((project) => {
+        renderProject(project, true)
+    });
+
+}
 
 
 
@@ -58,34 +68,42 @@ window.addEventListener("DOMContentLoaded", () => {
 })
 
 // all-tah button
-allTag.addEventListener("click", () =>{
+allTag.addEventListener("click", () => {
     state.viewState = { type: "all" };
     renderView();
 })
 
 
+// completed show btn
+const completedbtn = document.querySelector("#completed-tag")
+
+completedbtn.addEventListener("click", () => {
+    state.viewState = { type: "completed"};
+    renderView()
+})
+
 
 
 function renderView() {
     switch (state.viewState.type) {
-      case "all":
-        renderAllProjects();
-        break;
-    //   case "completed":
-    //     renderCompletedTasks();
-    //     break;
-    //   case "today":
-    //     renderTodayTasks();
-    //     break;
-    //   case "scheduled":
-    //     renderScheduledTasks();
-    //     break;
+        case "all":
+            renderAllProjects();
+            break;
+        case "completed":
+            renderCompletedTasks();
+            break;
+        //   case "today":
+        //     renderTodayTasks();
+        //     break;
+        //   case "scheduled":
+        //     renderScheduledTasks();
+        //     break;
         case "project":
             renderSingleProject(state.viewState.project);
             break;
     }
-  }
+}
 
 
 
-export {renderView, state}
+export { renderView, state }

@@ -44,6 +44,8 @@ function createTaskElement(task) {
     taskCheckBox.classList.add("task-checkbox");
     taskCheckBox.checked = task.completed;
 
+    if (task.completed) {divTask.classList.add("completed")} // for style completed task at completed section
+
     taskCheckBox.addEventListener("change", () => {
         task.toComplete();
         divTask.classList.toggle("completed", task.completed);
@@ -92,7 +94,7 @@ function createTaskElement(task) {
 
 }
 
-function renderProject(project) {
+function renderProject(project, completeMode = false) {
     const projectContainer = document.createElement("div");
     projectContainer.classList.add("project");
   
@@ -100,12 +102,20 @@ function renderProject(project) {
     heading.textContent = project.name;
   
     projectContainer.appendChild(heading);
-  
-    if (project.tasks !== ""){
+    
+    if (project.tasks !== "" && completeMode === false){
         project.tasks.forEach((task) => {
             const taskElement = createTaskElement(task);
             projectContainer.appendChild(taskElement);
         });
+    }
+
+    if (project.tasks !== "" && completeMode === true){
+        const completedTasks = project.tasks.filter(task => task.completed);
+        completedTasks.forEach((task) => {
+            const taskElement = createTaskElement(task);
+            projectContainer.appendChild(taskElement);
+        })
     }
   
     document.querySelector(".show").appendChild(projectContainer);
