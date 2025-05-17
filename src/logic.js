@@ -5,6 +5,13 @@ function getTodayDateStr() {
     const today = new Date();
     return today.toISOString().split("T")[0]; // → "2025-05-17"
 }
+
+function deleteProject(projectName){
+    const index = projects.findIndex(proj => proj.name === projectName);
+    if (index !== -1) {
+      projects.splice(index, 1);
+    }
+}
   
 
 class Project {
@@ -58,4 +65,4 @@ class Task {
 
 
 
-export {Project , Task , projects}
+export {Project , Task , projects , deleteProject}

@@ -1,7 +1,7 @@
 import "./styles.css"
 import "./dialog.js"
-import { Project, Task, projects } from "./logic.js"
-import { renderProject, work , createTaskElement } from "./dom.js"
+import { Project, Task, projects, deleteProject } from "./logic.js"
+import { renderProject, work, createTaskElement, deleteProjectElement } from "./dom.js"
 import "./dialog.js"
 
 const showSection = document.querySelector(".show")
@@ -46,7 +46,23 @@ function renderTodayTasks() {
 
             const heading = document.createElement("h4");
             heading.textContent = project.name;
-            container.appendChild(heading);
+
+            const deleteProjectBtn = document.createElement("button");
+            deleteProjectBtn.textContent = "Delete"
+            deleteProjectBtn.addEventListener("click", (e) => {
+                const confirmDelete = confirm(`Are you sure you want to delete "${project.name}"?`);
+                if (confirmDelete) {
+                    deleteProject(project.name);
+                    deleteProjectElement(project.name);
+
+                    if (state.viewState.type === "project" && state.viewState.project === project.name) {
+                        state.viewState = { type: "all" };
+                    }
+
+                    renderView();
+                }
+            });
+            container.append(heading, deleteProjectBtn);
 
             todayTasks.forEach(task => {
                 const taskElement = createTaskElement(task);
@@ -76,7 +92,24 @@ function renderScheduledTasks() {
 
             const heading = document.createElement("h4");
             heading.textContent = project.name;
-            container.appendChild(heading);
+
+            const deleteProjectBtn = document.createElement("button");
+            deleteProjectBtn.textContent = "Delete"
+            deleteProjectBtn.addEventListener("click", () => {
+                const confirmDelete = confirm(`Are you sure you want to delete "${project.name}"?`);
+                if (confirmDelete) {
+                    deleteProject(project.name);
+                    deleteProjectElement(project.name);
+
+                    if (state.viewState.type === "project" && state.viewState.project === project.name) {
+                        state.viewState = { type: "all" };
+                    }
+
+                    renderView();
+                }
+            });
+
+            container.append(heading, deleteProjectBtn);
 
             upComingTasks.forEach(task => {
                 const taskElement = createTaskElement(task);

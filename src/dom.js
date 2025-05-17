@@ -1,5 +1,5 @@
-import { renderView , state } from "./index.js";
-import { Project, Task , projects } from "./logic.js"
+import { renderView, state } from "./index.js";
+import { Project, Task, projects, deleteProject } from "./logic.js"
 import { openTaskDialog } from "./dialog.js";
 
 
@@ -11,9 +11,9 @@ const work = new Project("Work");
 const home = new Project("Home");
 
 
-const taskHome1 = new Task("cook", "make lunch", "2027-05-17", "high", home )
-const taskWork1 = new Task("project dialog", "Add dialog for project sec", "2026-05-17", "low", work )
-const taskWork2 = new Task("style", "style show section", "2024-05-17", "med", work )
+const taskHome1 = new Task("cook", "make lunch", "2027-05-17", "high", home)
+const taskWork1 = new Task("project dialog", "Add dialog for project sec", "2026-05-17", "low", work)
+const taskWork2 = new Task("style", "style show section", "2024-05-17", "med", work)
 
 createProjectElement(home);
 createProjectElement(work)
@@ -33,32 +33,32 @@ function createTaskElement(task) {
 
     const titleTaskLabel = document.createElement("label");
     titleTaskLabel.classList.add("title-task");
-    
+
     const titleTask = document.createElement("p");
     titleTask.textContent = task.title;
     titleTask.classList.add("title-task-p")
-    
+
 
     const taskCheckBox = document.createElement("input");
     taskCheckBox.type = "checkbox";
     taskCheckBox.classList.add("task-checkbox");
     taskCheckBox.checked = task.completed;
 
-    if (task.completed) {divTask.classList.add("completed")} // for style completed task at completed section
+    if (task.completed) { divTask.classList.add("completed") } // for style completed task at completed section
 
     taskCheckBox.addEventListener("change", () => {
         task.toComplete();
         divTask.classList.toggle("completed", task.completed);
     })
 
-    titleTaskLabel.append(taskCheckBox , titleTask)
+    titleTaskLabel.append(taskCheckBox, titleTask)
 
-    
+
 
     const prioritySpan = document.createElement("span");
     prioritySpan.classList.add(task.priority);
 
-    divTitle.append( titleTaskLabel, prioritySpan);
+    divTitle.append(titleTaskLabel, prioritySpan);
 
     const taskExplain = document.createElement("p");
     taskExplain.classList.add("task-explain");
@@ -97,31 +97,47 @@ function createTaskElement(task) {
 function renderProject(project, completeMode = false) {
     const projectContainer = document.createElement("div");
     projectContainer.classList.add("project");
-  
+
     const heading = document.createElement("h4");
     heading.textContent = project.name;
-  
-    projectContainer.appendChild(heading);
+
+    const deleteProjectBtn = document.createElement("button");
+    deleteProjectBtn.textContent = "Delete"
+    deleteProjectBtn.addEventListener("click", (e) => {
+        const confirmDelete = confirm(`Are you sure you want to delete "${project.name}"?`);
+        if (confirmDelete) {
+            deleteProject(project.name);
+            deleteProjectElement(project.name);
+
+            if (state.viewState.type === "project" && state.viewState.project === project.name) {
+                state.viewState = { type: "all" };
+            }
+
+            renderView();
+        }
+    });
+
+    projectContainer.append(heading, deleteProjectBtn);
 
     const tasksToRender = completeMode ? project.getCompletedTasks() : project.tasks;
-    
-    if (Array.isArray(project.tasks) && tasksToRender.length > 0 && completeMode === false){
+
+    if (Array.isArray(project.tasks) && tasksToRender.length > 0 && completeMode === false) {
         tasksToRender.forEach((task) => {
             const taskElement = createTaskElement(task);
             projectContainer.appendChild(taskElement);
         });
     }
 
-    if (Array.isArray(project.tasks) && tasksToRender.length > 0 && completeMode === true){
+    if (Array.isArray(project.tasks) && tasksToRender.length > 0 && completeMode === true) {
         tasksToRender.forEach((task) => {
             const taskElement = createTaskElement(task);
             projectContainer.appendChild(taskElement);
         })
     }
-  
+
     document.querySelector(".show").appendChild(projectContainer);
 }
-  
+
 
 
 
@@ -130,17 +146,22 @@ function createProjectElement(project) {
 
     const projectButton = document.createElement("button");
     projectButton.classList.add("project-items");
+    projectButton.dataset.projectName = project.name;
     projectButton.textContent = project.name;
 
     projectButton.addEventListener("click", () => {
         const showSection = document.querySelector(".show");
         showSection.innerHTML = "";
-        state.viewState = { type: "project", project: project.name}
-        console.log(state.viewState)
+        state.viewState = { type: "project", project: project.name }
         renderView()
     });
 
     projectsList.appendChild(projectButton);
+}
+
+function deleteProjectElement(projectName) {
+    const btn = document.querySelector(`[data-project-name="${projectName}"]`);
+    if (btn) btn.remove();
 }
 
 
@@ -158,4 +179,4 @@ function createOptions() {
     })
 }
 
-export {renderProject , work , createProjectElement, createOptions, createTaskElement}
+export { renderProject, work, createProjectElement, createOptions, createTaskElement, deleteProjectElement }
