@@ -1,8 +1,10 @@
 import "./styles.css"
 import "./dialog.js"
-import { Project, Task, projects, deleteProject } from "./logic.js"
-import { renderProject, work, createTaskElement, deleteProjectElement } from "./dom.js"
+import { Project, Task, projects, deleteProject, loadFromLocalStorage } from "./logic.js"
+import { renderProject, createTaskElement, deleteProjectElement } from "./dom.js"
 import "./dialog.js"
+
+loadFromLocalStorage();
 
 const showSection = document.querySelector(".show")
 

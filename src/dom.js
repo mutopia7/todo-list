@@ -1,22 +1,21 @@
 import { renderView, state } from "./index.js";
-import { Project, Task, projects, deleteProject } from "./logic.js"
+import { Project, Task, projects, deleteProject, saveToLocalStorage } from "./logic.js"
 import { openTaskDialog } from "./dialog.js";
 
 
 
+if (!localStorage.getItem("todo-data")) {
+    const work = new Project("Work");
+    const home = new Project("Home");
 
+    const taskHome1 = new Task("cook", "make lunch", "2027-05-17", "high", home)
+    const taskWork1 = new Task("project dialog", "Add dialog for project sec", "2026-05-17", "low", work)
+    const taskWork2 = new Task("style", "style show section", "2024-05-17", "med", work)
 
-
-const work = new Project("Work");
-const home = new Project("Home");
-
-
-const taskHome1 = new Task("cook", "make lunch", "2027-05-17", "high", home)
-const taskWork1 = new Task("project dialog", "Add dialog for project sec", "2026-05-17", "low", work)
-const taskWork2 = new Task("style", "style show section", "2024-05-17", "med", work)
-
-createProjectElement(home);
-createProjectElement(work)
+    createProjectElement(home);
+    createProjectElement(work)
+    saveToLocalStorage(); // ذخیره پروژه‌های نمونه
+}
 
 
 
@@ -48,6 +47,7 @@ function createTaskElement(task) {
 
     taskCheckBox.addEventListener("change", () => {
         task.toComplete();
+        saveToLocalStorage();
         divTask.classList.toggle("completed", task.completed);
     })
 
@@ -179,4 +179,4 @@ function createOptions() {
     })
 }
 
-export { renderProject, work, createProjectElement, createOptions, createTaskElement, deleteProjectElement }
+export { renderProject, createProjectElement, createOptions, createTaskElement, deleteProjectElement }
