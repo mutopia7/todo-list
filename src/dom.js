@@ -98,11 +98,15 @@ function renderProject(project, completeMode = false) {
     const projectContainer = document.createElement("div");
     projectContainer.classList.add("project");
 
+    const headProject = document.createElement("div");
+    headProject.classList.add("head-project");
+
     const heading = document.createElement("h4");
     heading.textContent = project.name;
 
     const deleteProjectBtn = document.createElement("button");
-    deleteProjectBtn.textContent = "Delete"
+    deleteProjectBtn.classList.add("delete-btn");
+    deleteProjectBtn.textContent = "Delete";
     deleteProjectBtn.addEventListener("click", (e) => {
         const confirmDelete = confirm(`Are you sure you want to delete "${project.name}"?`);
         if (confirmDelete) {
@@ -117,7 +121,9 @@ function renderProject(project, completeMode = false) {
         }
     });
 
-    projectContainer.append(heading, deleteProjectBtn);
+    headProject.append(heading, deleteProjectBtn)
+
+    projectContainer.append(headProject);
 
     const tasksToRender = completeMode ? project.getCompletedTasks() : project.tasks;
 

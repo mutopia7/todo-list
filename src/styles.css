@@ -10,6 +10,7 @@
     --dark-blue: rgb(74, 102, 226);
     --blue: rgb(159, 157, 186);
     --light-gary:rgb(218, 215, 215);
+    --del-btn: rgb(161, 50, 50);
     --top-priority: rgb(251, 6, 6);
     --med-priority: rgb(248, 161, 1);
     --low-priority: rgb(242, 202, 126);
@@ -142,10 +143,54 @@ html, body{
     padding-bottom: var(--min-gap);
 }
 
+.head-project{
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin: 20px;
+    border-bottom: 1px solid var(--dark-blue);
+}
+
+.head-project h4 {
+    margin: 0px;
+}
+
+.delete-btn{
+    border: none;
+    border-radius: 10px;
+    font-size: 1rem;
+    color: var(--egg);
+    background-color: var(--del-btn);
+    padding: 5px 10px;
+    cursor: pointer;
+}
+
+.delete-btn:hover{
+    background-color: transparent;
+    color: var(--del-btn);
+}
+
 .task {
     border-bottom: 1px solid var(--light-gary);
     margin-bottom: 5px;
 
+}
+
+.delete-task{
+    border: none;
+    background-color: var(--light-gary);
+    color: var(--light-black);
+    border-radius: 2px;
+    cursor: pointer;
+}
+
+.edit-task{
+    border: none;
+    background-color: var(--light-gary);
+    color: var(--light-black);
+    margin-left: var(--min-gap);
+    border-radius: 2px;
+    cursor: pointer;
 }
 
 

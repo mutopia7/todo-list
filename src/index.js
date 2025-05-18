@@ -46,11 +46,15 @@ function renderTodayTasks() {
             const container = document.createElement("div");
             container.classList.add("project");
 
+            const headProject = document.createElement("div");
+            headProject.classList.add("head-project")
+
             const heading = document.createElement("h4");
             heading.textContent = project.name;
 
             const deleteProjectBtn = document.createElement("button");
-            deleteProjectBtn.textContent = "Delete"
+            deleteProjectBtn.classList.add("delete-btn");
+            deleteProjectBtn.textContent = "Delete";
             deleteProjectBtn.addEventListener("click", (e) => {
                 const confirmDelete = confirm(`Are you sure you want to delete "${project.name}"?`);
                 if (confirmDelete) {
@@ -64,7 +68,10 @@ function renderTodayTasks() {
                     renderView();
                 }
             });
-            container.append(heading, deleteProjectBtn);
+
+            headProject.append(heading, deleteProjectBtn)
+
+            container.append(headProject);
 
             todayTasks.forEach(task => {
                 const taskElement = createTaskElement(task);
@@ -92,11 +99,15 @@ function renderScheduledTasks() {
             const container = document.createElement("div");
             container.classList.add("project");
 
+            const headProject = document.createElement("div");
+            headProject.classList.add("head-project");
+
             const heading = document.createElement("h4");
             heading.textContent = project.name;
 
             const deleteProjectBtn = document.createElement("button");
-            deleteProjectBtn.textContent = "Delete"
+            deleteProjectBtn.classList.add("delete-btn");
+            deleteProjectBtn.textContent = "Delete";
             deleteProjectBtn.addEventListener("click", () => {
                 const confirmDelete = confirm(`Are you sure you want to delete "${project.name}"?`);
                 if (confirmDelete) {
@@ -111,7 +122,9 @@ function renderScheduledTasks() {
                 }
             });
 
-            container.append(heading, deleteProjectBtn);
+            headProject.append(heading, deleteProjectBtn)
+
+            container.append(headProject);
 
             upComingTasks.forEach(task => {
                 const taskElement = createTaskElement(task);
