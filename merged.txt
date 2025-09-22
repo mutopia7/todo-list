@@ -1,0 +1,1324 @@
+==== ./webpack.config.js ====
+// webpack.config.js
+const path = require("path");
+const HtmlWebpackPlugin = require("html-webpack-plugin");
+
+module.exports = {
+  mode: "development",
+  entry: "./src/index.js",
+  output: {
+    filename: "main.js",
+    path: path.resolve(__dirname, "dist"),
+    clean: true,
+  },
+  devtool: "eval-source-map",
+  devServer: {
+    watchFiles: ["./src/template.html"],
+  },
+  plugins: [
+    new HtmlWebpackPlugin({
+      template: "./src/template.html",
+    }),
+  ],
+  module: {
+    rules: [
+      {
+        test: /\.css$/i,
+        use: ["style-loader", "css-loader"],
+      },
+      {
+        test: /\.html$/i,
+        loader: "html-loader",
+      },
+      {
+        test: /\.(png|svg|jpg|jpeg|gif)$/i,
+        type: "asset/resource",
+      },
+      {
+        test: /\.(woff|woff2|eot|ttf|otf)$/i,
+        type: 'asset/resource',
+      },
+    ],
+  },
+};
+
+==== ./src/logic.js ====
+import { createProjectElement } from "./dom";
+
+const projects = [];
+
+
+function getTodayDateStr() {
+    const today = new Date();
+    return today.toISOString().split("T")[0]; // → "2025-05-17"
+}
+
+function deleteProject(projectName){
+    const index = projects.findIndex(proj => proj.name === projectName);
+    if (index !== -1) {
+      projects.splice(index, 1);
+      saveToLocalStorage();
+    }
+}
+  
+
+class Project {
+    constructor(name) {
+        this.name = name;
+        this.tasks = [];
+        projects.push(this);
+    }
+
+    addTask(task) {
+        this.tasks.push(task);
+    }
+
+    removeTask(task) {
+        this.tasks = this.tasks.filter(t => t !== task)
+        saveToLocalStorage();
+    }
+
+    getCompletedTasks() {
+        return this.tasks.filter(task => task.completed);
+    }
+
+    getTodayTasks() {
+        const todayStr = getTodayDateStr();
+        return this.tasks.filter(task => task.dueDate === todayStr);
+    }
+
+    getScheduledTasks() {
+        const todayStr = getTodayDateStr();
+        return this.tasks.filter(task => task.dueDate > todayStr);
+    }
+
+}
+
+
+class Task {
+    constructor(title, description, dueDate, priority, project, completed = false) {
+        this.title = title;
+        this.description = description;
+        this.dueDate = dueDate;
+        this.priority = priority;
+        this.project = project;
+        this.completed = completed;
+
+        project.addTask(this);
+    }
+
+    toComplete() {
+        this.completed = !this.completed;
+        saveToLocalStorage();
+    }
+}
+
+
+// loacal storage
+
+function saveToLocalStorage() {
+    const plainProjects = projects.map(project => ({
+      name: project.name,
+      tasks: project.tasks.map(task => ({
+        title: task.title,
+        description: task.description,
+        dueDate: task.dueDate,
+        priority: task.priority,
+        completed: task.completed
+      }))
+    }));
+  
+    localStorage.setItem("todo-data", JSON.stringify(plainProjects));
+  }
+  
+
+  function loadFromLocalStorage() {
+    const data = localStorage.getItem("todo-data");
+    if (!data) return;
+  
+    const parsed = JSON.parse(data);
+  
+    parsed.forEach(proj => {
+      const project = new Project(proj.name);
+  
+      proj.tasks.forEach(task => {
+        new Task(task.title, task.description, task.dueDate, task.priority, project, task.completed);
+      });
+      createProjectElement(project);
+    });
+  }
+  
+  
+  
+
+
+
+export {Project , Task , projects , deleteProject, saveToLocalStorage, loadFromLocalStorage}
+==== ./src/styles.css ====
+@font-face {
+    font-family: roboto;
+    src: url(./fonts/Roboto-VariableFont_wdth\,wght.ttf);
+}
+
+
+:root{
+    --egg: #fcfaf8;
+    --light-black: #202020;
+    --dark-blue: rgb(74, 102, 226);
+    --blue: rgb(159, 157, 186);
+    --light-gary:rgb(218, 215, 215);
+    --del-btn: rgb(161, 50, 50);
+    --top-priority: rgb(251, 6, 6);
+    --med-priority: rgb(248, 161, 1);
+    --low-priority: rgb(242, 202, 126);
+
+
+    --padding-sidebar: 60px 60px;
+    --padding-button:10px 10px;
+    --padding-show: 40px 40px;
+    --min-gap: 7px;
+    --max-gap: 35px;
+    --inline-gap: 0.5rem;
+    
+    
+    margin: 0px;
+    padding: 0px;
+    box-sizing: border-box;
+}
+
+html, body{
+    height: 100%;
+    font-family: roboto;
+}
+
+.all{
+    display: grid;
+    grid-template: 1fr / clamp(260px, 25%, 400px)  1fr;
+    min-height: 100%;
+}
+
+.sidebar{
+    background-color: var(--egg);
+    color: var(--light-black);
+
+    display: flex;
+    flex-direction: column;
+    font-family: roboto;
+    gap: var(--max-gap);
+    padding: var(--padding-sidebar);
+    font-size: 1rem;
+    
+}
+
+.user a{
+    text-decoration: none;
+    color: inherit;
+    display: flex;
+    align-items: center;
+    gap: var(--inline-gap);
+    font-size: 1.8rem;
+    font-weight: 700;
+    color: var(--blue);
+}
+
+.sidebar button{
+    border: none;
+    background-color: inherit;
+    font-size: inherit;
+    display: flex;
+    align-items: center;
+    gap: var(--inline-gap);
+    white-space: nowrap;
+    cursor: pointer;
+    padding: var(--padding-button);
+    min-width: 0;
+    flex-shrink: 1;
+    border-radius: 10px;
+    margin: 0px;
+}
+
+.tag button:not(#add-task):hover{
+    background-color: var(--light-gary);
+}
+
+.projects button:not(#add-project):hover{
+    background-color: var(--light-gary);
+}
+
+.add{
+    color: var(--dark-blue);
+    font-weight: 700;
+}
+
+.size-3{
+    height: 1.5rem;
+    width: 1.5rem;
+    flex-shrink: 0;
+}
+
+.tag{
+    display: flex;
+    flex-direction: column;
+    gap: var(--min-gap);
+}
+
+
+.projects{
+    display: flex;
+    flex-direction: column;
+    gap: var(--min-gap);
+}
+
+
+.project-items:focus{
+    background-color: var(--light-gary);
+}
+
+.tag-items:focus{
+    color: var(--dark-blue);
+}
+
+
+/* show section */
+
+
+.show{
+    padding: var(--padding-show) ;
+    display: flex;
+    flex-direction: column;
+}
+
+
+
+.project {
+    display: flex;
+    flex-direction: column;
+}
+  
+.project > * {
+    
+    padding-bottom: var(--min-gap);
+}
+
+.head-project{
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin: 20px;
+    border-bottom: 1px solid var(--dark-blue);
+}
+
+.head-project h4 {
+    margin: 0px;
+}
+
+.delete-btn{
+    border: none;
+    border-radius: 10px;
+    font-size: 1rem;
+    color: var(--egg);
+    background-color: var(--del-btn);
+    padding: 5px 10px;
+    cursor: pointer;
+}
+
+.delete-btn:hover{
+    background-color: transparent;
+    color: var(--del-btn);
+}
+
+.task {
+    border-bottom: 1px solid var(--light-gary);
+    margin-bottom: 5px;
+
+}
+
+.delete-task{
+    border: none;
+    background-color: var(--light-gary);
+    color: var(--light-black);
+    border-radius: 2px;
+    cursor: pointer;
+}
+
+.edit-task{
+    border: none;
+    background-color: var(--light-gary);
+    color: var(--light-black);
+    margin-left: var(--min-gap);
+    border-radius: 2px;
+    cursor: pointer;
+}
+
+
+.task > p:not(.title){
+    color: var(--dark-blue);
+    margin: 5px 30px;
+    font-weight: 300;
+    font-size: 0.7rem;
+}
+
+
+.title {
+    display: flex;
+    align-items: center;
+    gap: var(--min-gap);
+    font-weight: 400;
+    font-size: 1rem;
+}
+
+.title-task {
+    display:  flex;
+    align-items: center;
+    max-height: 30px;
+    gap: var(--min-gap);
+    cursor: pointer;
+}
+
+.title-task input[type=checkbox]{
+    cursor: pointer;
+    accent-color: var(--dark-blue);
+}
+
+.high {
+    border: 1px solid var(--top-priority);
+    background-color: var(--top-priority);
+    border-radius: 100%;
+    width: 1ch;
+    height: 1ch;
+}
+
+.med {
+    border: 1px solid var(--med-priority);
+    background-color: var(--med-priority);
+    border-radius: 100%;
+    width: 1ch;
+    height: 1ch;
+}
+
+.low {
+    border: 1px solid var(--low-priority);
+    background-color: var(--low-priority);
+    border-radius: 100%;
+    width: 1ch;
+    height: 1ch;
+}
+
+
+.task-explain{
+    color: var(--light-black) !important;
+    display: none;
+}
+
+.task:hover > .task-explain{
+    display: block;
+}
+
+.task.completed {
+    background-color: #d0ffd0;
+    text-decoration: line-through;
+    border-radius: 10px;
+    opacity: 0.8;
+}
+
+.title-task-p {
+    font-size: 0.8rem;
+}
+
+
+
+
+
+
+
+
+
+
+@media (max-width:1200px) {
+    :root {
+      --padding-sidebar: 20px 20px;
+      --padding-button: 6px 6px;
+      --min-gap: 4px;
+      --max-gap: 15px;
+    }
+}
+==== ./src/dialog.js ====
+import "./dialog.css"
+import { Task, Project, projects, saveToLocalStorage, loadFromLocalStorage } from "./logic.js"
+import { renderProject, createProjectElement, createOptions } from "./dom.js"
+import { renderView, state } from "./index.js";
+
+
+let taskBeingEdited = null; // null → for add | otherwise > for edit
+
+const showButton = document.querySelector("#add-task");
+const addDialog = document.querySelector("#add-dialog");
+const closeAddDialog = document.querySelector("#close-add-dialog");
+const submitAddTask = document.querySelector("#submit-add-task");
+
+function openTaskDialog(task = null) {
+    taskBeingEdited = task || null;
+
+    const dialog = document.querySelector("#add-dialog");
+    const form = dialog.querySelector("form");
+
+    const titleEl = document.querySelector("#task-title");
+    const descEl = document.querySelector("#description");
+    const dateEl = document.querySelector("#due-date");
+    const priorityEl = document.querySelector("#priority-input");
+    const projectEl = document.querySelector("#select-project");
+
+    createOptions(); // for sure updating options
+
+    // add mode
+    if (!task) {
+        dialog.querySelector("h3").textContent = "Add Task";
+        submitAddTask.textContent = "Done";
+        form.reset();
+        taskBeingEdited = null;
+    }
+
+    // edit mode
+    else {
+        dialog.querySelector("h3").textContent = "Edit Task";
+        submitAddTask.textContent = "Save";
+
+        titleEl.value = task.title;
+        descEl.value = task.description;
+        dateEl.value = task.dueDate;
+        priorityEl.value = task.priority;
+
+        // should find index project
+        const projectIndex = projects.findIndex(p => p === task.project);
+        projectEl.value = projectIndex;
+
+        taskBeingEdited = task;
+    }
+
+
+    dialog.showModal();
+}
+
+
+
+
+
+showButton.addEventListener("click", () => {
+    taskBeingEdited = null
+    openTaskDialog()
+})
+
+closeAddDialog.addEventListener("click", () => {
+    addDialog.close();
+})
+
+submitAddTask.addEventListener("click", (e) => {
+    e.preventDefault();
+
+    const title = document.querySelector("#task-title").value;
+    const description = document.querySelector("#description").value;
+    const dueDate = document.querySelector("#due-date").value;
+    const priority = document.querySelector("#priority-input").value;
+    const selectedProject = projects[+document.querySelector("#select-project").value];
+
+    if (taskBeingEdited) {
+        // edit mode
+        const oldProject = taskBeingEdited.project;
+
+        taskBeingEdited.title = title;
+        taskBeingEdited.description = description;
+        taskBeingEdited.dueDate = dueDate;
+        taskBeingEdited.priority = priority;
+
+        if (title.trim() === ""){
+            alert("Task title cannot be empty.");
+            return;
+        }
+        
+        saveToLocalStorage();
+
+
+        // if project change, transfor it
+        if (selectedProject !== oldProject) {
+            oldProject.removeTask(taskBeingEdited); // این متد رو تو کلاس Project تعریف کن
+            selectedProject.addTask(taskBeingEdited);
+            taskBeingEdited.project = selectedProject;
+            saveToLocalStorage();
+
+        }
+
+    } else {
+        // add mode
+
+        if (title.trim() === ""){
+            alert("Task title cannot be empty.");
+            return;
+        }
+
+        new Task(title, description, dueDate, priority, selectedProject);
+        saveToLocalStorage();
+    }
+
+    taskBeingEdited = null;
+    addDialog.close();
+    renderView();
+});
+
+
+// add project dialog //
+
+const showAddProject = document.querySelector("#add-project");
+const projectDialog = document.querySelector("#project-dialog")
+const closeAddProject = document.querySelector("#close-project-dialog");
+const submitAddProject = document.querySelector("#submit-add-project");
+
+showAddProject.addEventListener("click", () => {
+    projectDialog.showModal();
+});
+
+closeAddProject.addEventListener("click", () => {
+
+    projectDialog.close();
+});
+
+submitAddProject.addEventListener("click", (e) => {
+    e.preventDefault();
+
+    const addProjectInput = document.querySelector("#add-project-input");
+
+    const name = addProjectInput.value.trim();
+
+    const projectExists = projects.some(project => project.name === name);
+
+    if (projectExists) {
+        alert("A project with this name already exists. Please choose a different name.");
+        return;
+    }
+
+    if (name === "") {
+        alert("Project name cannot be empty.");
+        return;
+    }
+
+    const newProject = new Project(addProjectInput.value);
+    createProjectElement(newProject);
+    saveToLocalStorage();
+    projectDialog.close();
+
+    if (state.viewState.type === "all") {
+        renderView();
+    }
+})
+
+
+
+export { openTaskDialog }
+==== ./src/index.js ====
+import "./styles.css"
+import "./dialog.js"
+import { Project, Task, projects, deleteProject, loadFromLocalStorage } from "./logic.js"
+import { renderProject, createTaskElement, deleteProjectElement } from "./dom.js"
+import "./dialog.js"
+
+loadFromLocalStorage();
+
+const showSection = document.querySelector(".show")
+
+// renders
+
+const state = {
+    viewState: {
+        type: "all",
+        project: null
+    }
+};
+
+
+// render All projects
+
+function renderAllProjects() {
+    showSection.innerHTML = "";
+
+    const header = document.createElement("h3")
+    header.textContent = "All Projects";
+    showSection.appendChild(header)
+
+    projects.forEach((project) => {
+        renderProject(project)
+    })
+}
+
+// render today projects
+
+function renderTodayTasks() {
+    showSection.innerHTML = "";
+    const header = document.createElement("h3");
+    header.textContent = "Today's Tasks";
+    showSection.appendChild(header);
+
+    projects.forEach(project => {
+        const todayTasks = project.getTodayTasks();
+        if (todayTasks.length > 0) {
+            const container = document.createElement("div");
+            container.classList.add("project");
+
+            const headProject = document.createElement("div");
+            headProject.classList.add("head-project")
+
+            const heading = document.createElement("h4");
+            heading.textContent = project.name;
+
+            const deleteProjectBtn = document.createElement("button");
+            deleteProjectBtn.classList.add("delete-btn");
+            deleteProjectBtn.textContent = "Delete";
+            deleteProjectBtn.addEventListener("click", (e) => {
+                const confirmDelete = confirm(`Are you sure you want to delete "${project.name}"?`);
+                if (confirmDelete) {
+                    deleteProject(project.name);
+                    deleteProjectElement(project.name);
+
+                    if (state.viewState.type === "project" && state.viewState.project === project.name) {
+                        state.viewState = { type: "all" };
+                    }
+
+                    renderView();
+                }
+            });
+
+            headProject.append(heading, deleteProjectBtn)
+
+            container.append(headProject);
+
+            todayTasks.forEach(task => {
+                const taskElement = createTaskElement(task);
+                container.appendChild(taskElement);
+            });
+
+            showSection.appendChild(container);
+        }
+    });
+}
+
+
+
+// render upcoming projects
+
+function renderScheduledTasks() {
+    showSection.innerHTML = "";
+    const header = document.createElement("h3");
+    header.textContent = "Upcoming Tasks";
+    showSection.appendChild(header);
+
+    projects.forEach(project => {
+        const upComingTasks = project.getScheduledTasks();
+        if (upComingTasks.length > 0) {
+            const container = document.createElement("div");
+            container.classList.add("project");
+
+            const headProject = document.createElement("div");
+            headProject.classList.add("head-project");
+
+            const heading = document.createElement("h4");
+            heading.textContent = project.name;
+
+            const deleteProjectBtn = document.createElement("button");
+            deleteProjectBtn.classList.add("delete-btn");
+            deleteProjectBtn.textContent = "Delete";
+            deleteProjectBtn.addEventListener("click", () => {
+                const confirmDelete = confirm(`Are you sure you want to delete "${project.name}"?`);
+                if (confirmDelete) {
+                    deleteProject(project.name);
+                    deleteProjectElement(project.name);
+
+                    if (state.viewState.type === "project" && state.viewState.project === project.name) {
+                        state.viewState = { type: "all" };
+                    }
+
+                    renderView();
+                }
+            });
+
+            headProject.append(heading, deleteProjectBtn)
+
+            container.append(headProject);
+
+            upComingTasks.forEach(task => {
+                const taskElement = createTaskElement(task);
+                container.appendChild(taskElement);
+            });
+
+            showSection.appendChild(container);
+        }
+    });
+}
+
+
+
+// render single project
+
+function renderSingleProject(projectName) {
+    showSection.innerHTML = "";
+    const selectedProject = projects.find((project) => project.name === projectName);
+    renderProject(selectedProject)
+}
+
+
+// render completed tasks
+
+function renderCompletedTasks() {
+    showSection.innerHTML = "";
+    const header = document.createElement("h3");
+    header.textContent = "Completed Tasks";
+    showSection.appendChild(header);
+
+
+    projects.forEach((project) => {
+        renderProject(project, true)
+    });
+
+}
+
+
+
+
+
+
+
+
+// all projects show button//
+
+const allTag = document.querySelector("#all-tag");
+
+// all-tag button clicked at first load//
+window.addEventListener("DOMContentLoaded", () => {
+    allTag.click();
+    allTag.focus();
+})
+
+// all-tag button
+allTag.addEventListener("click", () => {
+    state.viewState = { type: "all" };
+    renderView();
+})
+
+
+// today tasks btn
+const todayBtn = document.querySelector("#today-tag");
+todayBtn.addEventListener("click", () => {
+    state.viewState = { type: "today" };
+    renderView();
+});
+
+// upcoming tasks btn
+const upComingBtn = document.querySelector("#scheduled");
+upComingBtn.addEventListener("click", () => {
+    state.viewState = { type: "scheduled" };
+    renderView();
+});
+
+
+// completed show btn
+const completedbtn = document.querySelector("#completed-tag")
+
+completedbtn.addEventListener("click", () => {
+    state.viewState = { type: "completed" };
+    renderView()
+})
+
+
+
+function renderView() {
+    switch (state.viewState.type) {
+        case "all":
+            renderAllProjects();
+            break;
+        case "completed":
+            renderCompletedTasks();
+            break;
+        case "today":
+            renderTodayTasks();
+            break;
+        case "scheduled":
+            renderScheduledTasks();
+            break;
+        case "project":
+            renderSingleProject(state.viewState.project);
+            break;
+    }
+}
+
+
+
+export { renderView, state }
+==== ./src/dom.js ====
+import { renderView, state } from "./index.js";
+import { Project, Task, projects, deleteProject, saveToLocalStorage } from "./logic.js"
+import { openTaskDialog } from "./dialog.js";
+
+
+
+if (!localStorage.getItem("todo-data")) {
+    const work = new Project("Work");
+    const home = new Project("Home");
+
+    const taskHome1 = new Task("cook", "make lunch", "2027-05-17", "high", home)
+    const taskWork1 = new Task("project dialog", "Add dialog for project sec", "2026-05-17", "low", work)
+    const taskWork2 = new Task("style", "style show section", "2024-05-17", "med", work)
+
+    createProjectElement(home);
+    createProjectElement(work)
+    saveToLocalStorage(); // ذخیره پروژه‌های نمونه
+}
+
+
+
+
+function createTaskElement(task) {
+
+
+    const divTask = document.createElement("div");
+    divTask.classList.add("task");
+
+
+    const divTitle = document.createElement("div");
+    divTitle.classList.add("title");
+
+    const titleTaskLabel = document.createElement("label");
+    titleTaskLabel.classList.add("title-task");
+
+    const titleTask = document.createElement("p");
+    titleTask.textContent = task.title;
+    titleTask.classList.add("title-task-p")
+
+
+    const taskCheckBox = document.createElement("input");
+    taskCheckBox.type = "checkbox";
+    taskCheckBox.classList.add("task-checkbox");
+    taskCheckBox.checked = task.completed;
+
+    if (task.completed) { divTask.classList.add("completed") } // for style completed task at completed section
+
+    taskCheckBox.addEventListener("change", () => {
+        task.toComplete();
+        saveToLocalStorage();
+        divTask.classList.toggle("completed", task.completed);
+    })
+
+    titleTaskLabel.append(taskCheckBox, titleTask)
+
+
+
+    const prioritySpan = document.createElement("span");
+    prioritySpan.classList.add(task.priority);
+
+    divTitle.append(titleTaskLabel, prioritySpan);
+
+    const taskExplain = document.createElement("p");
+    taskExplain.classList.add("task-explain");
+    taskExplain.textContent = task.description;
+
+    const taskDate = document.createElement("p");
+    taskDate.classList.add("task-date");
+    taskDate.textContent = task.dueDate;
+
+    const deleteTask = document.createElement("button");
+    deleteTask.classList.add("delete-task");
+    deleteTask.textContent = "Delete";
+    deleteTask.addEventListener("click", () => {
+        task.project.removeTask(task);
+        renderView();
+    });
+
+    const editTask = document.createElement("button");
+    editTask.classList.add("edit-task");
+    editTask.textContent = "Edit"
+    editTask.addEventListener("click", () => {
+        openTaskDialog(task)
+    })
+
+
+
+
+
+    divTask.append(divTitle, taskExplain, taskDate, deleteTask, editTask);
+
+
+    return divTask;
+
+}
+
+function renderProject(project, completeMode = false) {
+    const projectContainer = document.createElement("div");
+    projectContainer.classList.add("project");
+
+    const headProject = document.createElement("div");
+    headProject.classList.add("head-project");
+
+    const heading = document.createElement("h4");
+    heading.textContent = project.name;
+
+    const deleteProjectBtn = document.createElement("button");
+    deleteProjectBtn.classList.add("delete-btn");
+    deleteProjectBtn.textContent = "Delete";
+    deleteProjectBtn.addEventListener("click", (e) => {
+        const confirmDelete = confirm(`Are you sure you want to delete "${project.name}"?`);
+        if (confirmDelete) {
+            deleteProject(project.name);
+            deleteProjectElement(project.name);
+
+            if (state.viewState.type === "project" && state.viewState.project === project.name) {
+                state.viewState = { type: "all" };
+            }
+
+            renderView();
+        }
+    });
+
+    headProject.append(heading, deleteProjectBtn)
+
+    projectContainer.append(headProject);
+
+    const tasksToRender = completeMode ? project.getCompletedTasks() : project.tasks;
+
+    if (Array.isArray(project.tasks) && tasksToRender.length > 0 && completeMode === false) {
+        tasksToRender.forEach((task) => {
+            const taskElement = createTaskElement(task);
+            projectContainer.appendChild(taskElement);
+        });
+    }
+
+    if (Array.isArray(project.tasks) && tasksToRender.length > 0 && completeMode === true) {
+        tasksToRender.forEach((task) => {
+            const taskElement = createTaskElement(task);
+            projectContainer.appendChild(taskElement);
+        })
+    }
+
+    document.querySelector(".show").appendChild(projectContainer);
+}
+
+
+
+
+function createProjectElement(project) {
+    const projectsList = document.querySelector(".projects");
+
+    const projectButton = document.createElement("button");
+    projectButton.classList.add("project-items");
+    projectButton.dataset.projectName = project.name;
+    projectButton.textContent = project.name;
+
+    projectButton.addEventListener("click", () => {
+        const showSection = document.querySelector(".show");
+        showSection.innerHTML = "";
+        state.viewState = { type: "project", project: project.name }
+        renderView()
+    });
+
+    projectsList.appendChild(projectButton);
+}
+
+function deleteProjectElement(projectName) {
+    const btn = document.querySelector(`[data-project-name="${projectName}"]`);
+    if (btn) btn.remove();
+}
+
+
+// add project options to the select at add dialog //
+
+function createOptions() {
+    const selectProject = document.querySelector("#select-project");
+    selectProject.innerHTML = "";
+
+    projects.forEach((proj, index) => {
+        const option = document.createElement("option");
+        option.value = index;
+        option.textContent = proj.name;
+        selectProject.appendChild(option)
+    })
+}
+
+export { renderProject, createProjectElement, createOptions, createTaskElement, deleteProjectElement }
+==== ./src/template.html ====
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ToDo List</title>
+</head>
+
+<body>
+    <div class="all">
+
+        <section class="sidebar">
+            <div class="user">
+                <a href="https://github.com/mutopia7" rel="noopener npreferer"><svg xmlns="http://www.w3.org/2000/svg" fill="none"
+                        viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" style="width: 1.8rem;">
+                        <path stroke-linecap="round" stroke-linejoin="round"
+                            d="M17.982 18.725A7.488 7.488 0 0 0 12 15.75a7.488 7.488 0 0 0-5.982 2.975m11.963 0a9 9 0 1 0-11.963 0m11.963 0A8.966 8.966 0 0 1 12 21a8.966 8.966 0 0 1-5.982-2.275M15 9.75a3 3 0 1 1-6 0 3 3 0 0 1 6 0Z" />
+                    </svg>
+                    Motopia7
+                </a>
+            </div>
+            <div class="tag">
+
+                <dialog id="add-dialog">
+                    <div class="dialog-header">
+                        <h3>Add Task</h3>
+                        <button class="close-dialog" id="close-add-dialog">
+                            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="size-3">
+                                <path stroke-linecap="round" stroke-linejoin="round" d="M6 18 18 6M6 6l12 12" />
+                              </svg>
+                              
+                             <span class="visually-hidden">close</span>
+                        </button>
+                    </div>
+                    <form action="">
+                        <label for="task-title" class="visually-hidden">
+                            Task Title:
+                        </label>
+                        <input type="text" name="task-title" id="task-title" placeholder="Task Title">
+
+                        <label for="description" class="visually-hidden">
+                            Description:
+                        </label>
+                        <textarea name="description" id="description" placeholder="Description"></textarea>
+
+                        <label for="due-date" class="visually-hidden">
+                            Date:
+
+                        </label>
+                        <input type="date" id="due-date">
+
+                        <label for="priority-input">
+                            Priority:
+                        </label>
+                        <select name="priority" id="priority-input">
+                            <option value="high">high</option>
+                            <option value="med">med</option>
+                            <option value="low">low</option>
+                        </select>
+
+                        <label for="select-project">
+                            Projects:
+                        </label>
+                        <select name="projects" id="select-project">
+
+                        </select>
+
+                        <button type="submit" class="submit-dialog" id="submit-add-task">Done</button>
+                    </form>
+                </dialog>
+
+                <button class="add" id="add-task">
+                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" class="size-3">
+                        <path fill-rule="evenodd"
+                            d="M12 2.25c-5.385 0-9.75 4.365-9.75 9.75s4.365 9.75 9.75 9.75 9.75-4.365 9.75-9.75S17.385 2.25 12 2.25ZM12.75 9a.75.75 0 0 0-1.5 0v2.25H9a.75.75 0 0 0 0 1.5h2.25V15a.75.75 0 0 0 1.5 0v-2.25H15a.75.75 0 0 0 0-1.5h-2.25V9Z"
+                            clip-rule="evenodd" />
+                    </svg>
+                    Add task
+                </button>
+
+
+
+                <button class="tag-items" id="all-tag">
+                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5"
+                        stroke="currentColor" class="size-3">
+                        <path stroke-linecap="round" stroke-linejoin="round"
+                            d="M3.375 19.5h17.25m-17.25 0a1.125 1.125 0 0 1-1.125-1.125M3.375 19.5h7.5c.621 0 1.125-.504 1.125-1.125m-9.75 0V5.625m0 12.75v-1.5c0-.621.504-1.125 1.125-1.125m18.375 2.625V5.625m0 12.75c0 .621-.504 1.125-1.125 1.125m1.125-1.125v-1.5c0-.621-.504-1.125-1.125-1.125m0 3.75h-7.5A1.125 1.125 0 0 1 12 18.375m9.75-12.75c0-.621-.504-1.125-1.125-1.125H3.375c-.621 0-1.125.504-1.125 1.125m19.5 0v1.5c0 .621-.504 1.125-1.125 1.125M2.25 5.625v1.5c0 .621.504 1.125 1.125 1.125m0 0h17.25m-17.25 0h7.5c.621 0 1.125.504 1.125 1.125M3.375 8.25c-.621 0-1.125.504-1.125 1.125v1.5c0 .621.504 1.125 1.125 1.125m17.25-3.75h-7.5c-.621 0-1.125.504-1.125 1.125m8.625-1.125c.621 0 1.125.504 1.125 1.125v1.5c0 .621-.504 1.125-1.125 1.125m-17.25 0h7.5m-7.5 0c-.621 0-1.125.504-1.125 1.125v1.5c0 .621.504 1.125 1.125 1.125M12 10.875v-1.5m0 1.5c0 .621-.504 1.125-1.125 1.125M12 10.875c0 .621.504 1.125 1.125 1.125m-2.25 0c.621 0 1.125.504 1.125 1.125M13.125 12h7.5m-7.5 0c-.621 0-1.125.504-1.125 1.125M20.625 12c.621 0 1.125.504 1.125 1.125v1.5c0 .621-.504 1.125-1.125 1.125m-17.25 0h7.5M12 14.625v-1.5m0 1.5c0 .621-.504 1.125-1.125 1.125M12 14.625c0 .621.504 1.125 1.125 1.125m-2.25 0c.621 0 1.125.504 1.125 1.125m0 1.5v-1.5m0 0c0-.621.504-1.125 1.125-1.125m0 0h7.5" />
+                    </svg>
+
+                    All
+                </button>
+                <button class="tag-items" id="today-tag">
+                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5"
+                        stroke="currentColor" class="size-3">
+                        <path stroke-linecap="round" stroke-linejoin="round"
+                            d="m18.375 12.739-7.693 7.693a4.5 4.5 0 0 1-6.364-6.364l10.94-10.94A3 3 0 1 1 19.5 7.372L8.552 18.32m.009-.01-.01.01m5.699-9.941-7.81 7.81a1.5 1.5 0 0 0 2.112 2.13" />
+                    </svg>
+                    Today
+                </button>
+                <button class="tag-items" id="scheduled">
+                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5"
+                        stroke="currentColor" class="size-3">
+                        <path stroke-linecap="round" stroke-linejoin="round"
+                            d="M6.75 3v2.25M17.25 3v2.25M3 18.75V7.5a2.25 2.25 0 0 1 2.25-2.25h13.5A2.25 2.25 0 0 1 21 7.5v11.25m-18 0A2.25 2.25 0 0 0 5.25 21h13.5A2.25 2.25 0 0 0 21 18.75m-18 0v-7.5A2.25 2.25 0 0 1 5.25 9h13.5A2.25 2.25 0 0 1 21 11.25v7.5m-9-6h.008v.008H12v-.008ZM12 15h.008v.008H12V15Zm0 2.25h.008v.008H12v-.008ZM9.75 15h.008v.008H9.75V15Zm0 2.25h.008v.008H9.75v-.008ZM7.5 15h.008v.008H7.5V15Zm0 2.25h.008v.008H7.5v-.008Zm6.75-4.5h.008v.008h-.008v-.008Zm0 2.25h.008v.008h-.008V15Zm0 2.25h.008v.008h-.008v-.008Zm2.25-4.5h.008v.008H16.5v-.008Zm0 2.25h.008v.008H16.5V15Z" />
+                    </svg>
+                    Upcoming
+                </button>
+                <button class="tag-items" id="completed-tag">
+                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5"
+                        stroke="currentColor" class="size-3">
+                        <path stroke-linecap="round" stroke-linejoin="round"
+                            d="M9 12.75 11.25 15 15 9.75m-3-7.036A11.959 11.959 0 0 1 3.598 6 11.99 11.99 0 0 0 3 9.749c0 5.592 3.824 10.29 9 11.623 5.176-1.332 9-6.03 9-11.622 0-1.31-.21-2.571-.598-3.751h-.152c-3.196 0-6.1-1.248-8.25-3.285Z" />
+                    </svg>
+                    Completed
+                </button>
+            </div>
+
+            <div class="projects">
+                <h3>Projects</h3>
+
+                <dialog id="project-dialog">
+                    <div class="dialog-header">
+                        <h3>Add Project</h3>
+                        <button class="close-dialog" id="close-project-dialog">
+                            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="size-3">
+                                <path stroke-linecap="round" stroke-linejoin="round" d="M6 18 18 6M6 6l12 12" />
+                              </svg>
+                              
+                             <span class="visually-hidden">close</span>
+                        </button>
+                    </div>
+                    <form action="">
+                        <label for="add-project-input" class="visually-hidden">Project name</label>
+                        <input type="text" id="add-project-input" placeholder="Project name">
+
+                        <button type="submit" class="submit-dialog" id="submit-add-project">Done</button>
+
+
+                    </form>
+
+                </dialog>
+
+                <button class="add" id="add-project">
+                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5"
+                        stroke="currentColor" class="size-3">
+                        <path stroke-linecap="round" stroke-linejoin="round"
+                            d="M12 10.5v6m3-3H9m4.06-7.19-2.12-2.12a1.5 1.5 0 0 0-1.061-.44H4.5A2.25 2.25 0 0 0 2.25 6v12a2.25 2.25 0 0 0 2.25 2.25h15A2.25 2.25 0 0 0 21.75 18V9a2.25 2.25 0 0 0-2.25-2.25h-5.379a1.5 1.5 0 0 1-1.06-.44Z" />
+                    </svg>
+
+                    Add project
+                </button>
+    
+            </div>
+        </section>
+
+        <main class="show">
+            
+        </main>
+    </div>
+
+
+</body>
+
+</html>
+==== ./src/dialog.css ====
+.visually-hidden {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    overflow: hidden;
+    clip: rect(0 0 0 0);
+    white-space: nowrap;
+    border: 0;
+    padding: 0;
+  }
+
+
+
+
+
+
+.dialog-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 20px;
+  }
+  
+  .dialog-header h3 {
+    font-size: 1.25rem;
+    line-height: 1.2;
+    margin: 0;
+  }
+  
+  .close-dialog {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border: none;
+    padding: 0 !important;
+    background-color: none !important;
+    cursor: pointer;
+    align-self: center;
+  }
+
+  .close-dialog:hover{
+    background-color: inherit !important;
+  }
+  
+
+  
+
+
+
+#add-dialog{
+    border: none;
+    border-radius: 10px;
+    padding: 30px;
+}
+
+
+#add-dialog form{
+    display: flex;
+    flex-direction: column;
+    gap: var(--max-gap);
+}
+
+#add-dialog form label{
+    font-size: 0.8rem;
+}
+
+#add-dialog form input{
+    background-color: #f3f3f3;
+    border: none;
+    border-radius: 0.5rem;
+    padding: 5px 10px;
+}
+
+#add-dialog form textarea{
+    background-color: #f3f3f3;
+    border: none;
+    border-radius: 0.5rem;
+    padding: 5px 10px;
+    resize: vertical;
+    min-height: 5ch;
+    max-height: 15ch;
+}
+
+#add-dialog form select{
+    background-color: #f3f3f3;
+    border: none;
+    border-radius: 0.5rem;
+    padding: 5px 10px;
+}
+
+.submit-dialog{
+    background-color: var(--dark-blue) !important;
+    color: white;
+    padding: 10px 10px !important;
+    align-self: center !important;
+}
+
+/* project dialog */
+
+#project-dialog{
+    border: none;
+    border-radius: 10px;
+    padding: 30px;
+}
+
+#project-dialog form{
+    display: flex;
+    gap: var(--min-gap);
+}
+
+#project-dialog form input{
+    background-color: #f3f3f3;
+    border: none;
+    border-radius: 0.5rem;
+    padding: 5px 10px;
+}
